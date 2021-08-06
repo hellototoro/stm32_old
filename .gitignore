@@ -1,0 +1,16 @@
+# eclipse stuff
+Debug/
+
+# TouchGFX
+TouchGFX/build/
+TouchGFX/generated/
+TouchGFX/target/generated/
+TouchGFX/simulator/
+
+# VScode
+.vscode
+
+# Emacs
+.#*
+
+# other
