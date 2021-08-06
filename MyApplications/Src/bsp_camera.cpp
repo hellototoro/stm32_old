@@ -1,4 +1,4 @@
-#include <Inc/bsp_camera.hpp>
+#include "../../MyApplications/Inc/bsp_camera.hpp"
 
 
 /** @defgroup STM324xG_EVAL_CAMERA_Private_Variables STM324xG EVAL CAMERA Private Variables

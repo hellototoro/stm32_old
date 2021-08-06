@@ -1,8 +1,9 @@
-#include <Inc/mainpp.hpp>
+#include "../../MyApplications/Inc/mainpp.hpp"
+
 #include <led/Inc/led.h>
-#include <Inc/bsp_camera.hpp>
-#include <tftlcd/Inc/tftlcd.h>
+#include <lcd/Inc/tftlcd.h>
 #include <print/Inc/print.h>
+#include "../../MyApplications/Inc/bsp_camera.hpp"
 
 //uint16_t FrameBuffer[240 * 240];	// 카메라로 부터 들어오는 이미지 데이터의 프레임버퍼
 //uint32_t RemaindImage = (uint32_t)FrameBuffer + (320 * 200) * 2; // RGB565 2Byte이므로 곱하기 2

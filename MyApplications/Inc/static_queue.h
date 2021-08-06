@@ -1,7 +1,7 @@
 #ifndef __STATIC_QUEUE_H
 #define __STATIC_QUEUE_H
 
-#include "bluetooth.h"
+#include "../../MyApplications/Inc/bluetooth.h"
 
 #ifndef true
 #define true 1

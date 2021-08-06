@@ -6,7 +6,8 @@
   * @author  jee
   ******************************************************************************
   */
-#include <Inc/motor_control.h>
+#include "../../MyApplications/Inc/motor_control.h"
+
 #include "main.h"
 
 

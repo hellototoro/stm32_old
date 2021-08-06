@@ -6,8 +6,9 @@
   * @author  jee
   ******************************************************************************
   */
-#include <Inc/car_control.h>
-#include <Inc/motor_control.h>
+#include "../../MyApplications/Inc/car_control.h"
+
+#include "../../MyApplications/Inc/motor_control.h"
 
 
 Car_control Car;

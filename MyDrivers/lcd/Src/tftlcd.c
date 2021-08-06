@@ -7,9 +7,9 @@
 	* @author  jee
   ******************************************************************************
   */
-#include <tftlcd/Inc/tftlcd.h>
-#include <tftlcd/Inc/tftlcd_font.h>
-#include <tftlcd/Inc/tftlcd_picture.h>
+#include <lcd/Inc/tftlcd.h>
+#include <lcd/Inc/tftlcd_font.h>
+#include <lcd/Inc/tftlcd_picture.h>
 #include "print/Inc/print.h"
 
 

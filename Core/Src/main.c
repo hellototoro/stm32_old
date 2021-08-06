@@ -18,6 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <lcd/Inc/tftlcd.h>
 #include "main.h"
 #include "cmsis_os.h"
 #include "app_touchgfx.h"
@@ -25,12 +26,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "print/Inc/print.h"
-#include "tftlcd/Inc/tftlcd.h"
-
-#include "../../MyApplication/Inc/bluetooth.h"
-#include "../../MyApplication/Inc/car_control.h"
-#include "../../MyApplication/Inc/mainpp.hpp"
-#include "../../MyApplication/Inc/ui.h"
+#include "Inc/bluetooth.h"
+#include "Inc/car_control.h"
+#include "Inc/mainpp.hpp"
+#include "Inc/ui.h"
 
 /* USER CODE END Includes */
 

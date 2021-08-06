@@ -6,10 +6,11 @@
   * @author  jee
   ******************************************************************************
   */
-#include <Inc/bluetooth.h>
-#include <Inc/static_queue.h>
-#include <tftlcd/Inc/tftlcd.h>
-#include <Inc/car_control.h>
+#include "../../MyApplications/Inc/bluetooth.h"
+
+#include <lcd/Inc/tftlcd.h>
+#include "../../MyApplications/Inc/car_control.h"
+#include "../../MyApplications/Inc/static_queue.h"
 
 
 /* �������� */

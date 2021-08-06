@@ -6,9 +6,9 @@
   * @author  jee
   ******************************************************************************
   */
-#include <Inc/ui.h>
+#include "../../MyApplications/Inc/ui.h"
 
-#include <tftlcd/Inc/tftlcd.h>
+#include <lcd/Inc/tftlcd.h>
 
 
 void ui_frame(void)
