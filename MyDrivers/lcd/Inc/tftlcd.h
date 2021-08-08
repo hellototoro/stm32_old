@@ -94,6 +94,7 @@ extern void LCD_Clear(uint16_t color);
 extern void LCD_WriteRAM_Prepare(void);
 extern void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos);
 extern void LCD_ShowPicture2(uint16_t x, uint16_t y, uint16_t wide, uint16_t high,uint16_t *pic);
+extern void LCD_IO_WriteMultipleData(uint16_t* pData, uint32_t Size);
 
 #define R7               0x0007
 #define R32              0x0200

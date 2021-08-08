@@ -79,6 +79,17 @@ uint16_t LCD_IO_ReadData(uint16_t Reg)
   return (FSMC_BANK1NORSRAM4_ReadData(Reg));
 }
 
+/*void LCD_IO_WriteMultipleData(uint16_t* pData, uint32_t Size)
+{
+	uint32_t  i;
+
+	for (i = 0; i < Size; i++)
+	{
+		//LCD->LCD_RAM=pData[i];
+		LCD_IO_WriteData(pData[i]);
+	}
+}*/
+
 //写寄存器
 //LCD_Reg:寄存器地址
 //LCD_RegValue:要写入的数据
@@ -505,7 +516,8 @@ void LCD_ShowPicture(uint16_t x, uint16_t y, uint16_t wide, uint16_t high,uint8_
 {
 	uint16_t temp = 0;
 	long tmp=0,num=0;
-	LCD_SetWindow(x, y, x+wide-1, y+high-1);
+	//LCD_SetWindow(x, y, x+wide, y+high);
+	LCD_SetCursor(x,y);
 	LCD_WriteRAM_Prepare();
 	num = wide * high*2 ;
 	do
@@ -616,7 +628,10 @@ void LCD_Init(void)
 	LCD_IO_WriteReg(0x0202);
     
 	LCD_SetDisplayDir(horizontal);		//0������  1������  Ĭ������
-	LCD_FillColor(BLACK);
+	LCD_FillColor(GRED);
+	LCD_SetWindow(0, 0, 400, 240);
 	//LCD_ShowPicture(0, 0, 400, 240,(uint8_t *)gImage_ff);
 	LCD_BacklightControl(ON);
+    //LCD_SetWindow(0,0,lcd_dev.width,lcd_dev.height);
+    //LCD_WriteRAM_Prepare();		//开始写入GRAM
 }

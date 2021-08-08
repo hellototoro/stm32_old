@@ -17,6 +17,16 @@
 #include <TouchGFXHAL.hpp>
 
 /* USER CODE BEGIN TouchGFXHAL.cpp */
+#include <lcd/Inc/tftlcd.h>
+#include <touchgfx/hal/OSWrappers.hpp>
+#include "stm32f4xx.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
+bool os_inited = false;
+volatile bool firstFrameReadyToDisplay = false;
+static uint16_t* currFbBase = 0;
+
 
 using namespace touchgfx;
 
@@ -27,8 +37,11 @@ void TouchGFXHAL::initialize()
     // To overwrite the generated implementation, omit call to parent function
     // and implemented needed functionality here.
     // Please note, HAL::initialize() must be called to initialize the framework.
+    LCD_Init();
 
     TouchGFXGeneratedHAL::initialize();
+    lockDMAToFrontPorch(false);
+    os_inited = true;
 }
 
 /**
@@ -61,6 +74,19 @@ void TouchGFXHAL::setTFTFrameBuffer(uint16_t* address)
     TouchGFXGeneratedHAL::setTFTFrameBuffer(address);
 }
 
+void TouchGFXHAL::copyFrameBufferBlockToLCD(const touchgfx::Rect& rect)
+{
+    __IO uint16_t* ptr;
+    uint16_t height;
+
+    // This can be accelerated using regular DMA hardware
+    for (height = 0; height < rect.height ; height++)
+    {
+        ptr = getClientFrameBuffer() + rect.x + (height + rect.y) * HAL::DISPLAY_WIDTH;
+        LCD_IO_WriteMultipleData((uint16_t*)ptr, rect.width);
+    }
+}
+
 /**
  * This function is called whenever the framework has performed a partial draw.
  *
@@ -80,7 +106,29 @@ void TouchGFXHAL::flushFrameBuffer(const touchgfx::Rect& rect)
     // use advanceFrameBufferToRect(uint8_t* fbPtr, const touchgfx::Rect& rect)
     // defined in TouchGFXGeneratedHAL.cpp
 
-    TouchGFXGeneratedHAL::flushFrameBuffer(rect);
+    //uint16_t* fb = HAL::lockFrameBuffer();
+
+    //Prepare display: Set cursor, write to display gram as described previously in this scenario
+    LCD_SetWindow(rect.x, rect.y, rect.width, rect.height);
+    LCD_WriteRAM_Prepare();		//�??始写入GRAM
+
+    //Try to take a display semaphore - Always free at this point
+    //xSemaphoreTake(screen_frame_buffer_sem, portMAX_DELAY);
+
+    //Set up DMA
+    //screenDMAEnable();
+
+    // Wait for the DMA transfer to complete
+    //xSemaphoreTake(screen_frame_buffer_sem, portMAX_DELAY);
+
+    //Unlock framebuffer and give semaphore back
+    //HAL::unlockFrameBuffer();
+    //xSemaphoreGive(screen_frame_buffer_sem);
+
+    //TouchGFXGeneratedHAL::flushFrameBuffer(rect);
+
+    /* Send Pixels - User defined function */
+    copyFrameBufferBlockToLCD(rect);
 }
 
 bool TouchGFXHAL::blockCopy(void* RESTRICT dest, const void* RESTRICT src, uint32_t numBytes)

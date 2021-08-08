@@ -18,7 +18,6 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <lcd/Inc/tftlcd.h>
 #include "main.h"
 #include "cmsis_os.h"
 #include "app_touchgfx.h"
@@ -29,6 +28,7 @@
 #include "Inc/bluetooth.h"
 #include "Inc/car_control.h"
 #include "Inc/mainpp.hpp"
+#include "lcd/Inc/tftlcd.h"
 #include "Inc/ui.h"
 
 /* USER CODE END Includes */
@@ -65,8 +65,9 @@ TIM_HandleTypeDef htim12;
 
 UART_HandleTypeDef huart3;
 
+DMA_HandleTypeDef hdma_memtomem_dma2_stream0;
 SRAM_HandleTypeDef hsram1;
-SRAM_HandleTypeDef hsram4;
+SRAM_HandleTypeDef hsram2;
 
 osThreadId defaultTaskHandle;
 osThreadId GUITaskHandle;
@@ -83,7 +84,10 @@ PWM_HandleTypeDef *right_front_motor_pwm = &htim9;
 PWM_HandleTypeDef *left_back_motor_pwm = &htim12;
 PWM_HandleTypeDef *right_back_motor_pwm = &htim12;
 DCMI_HandleTypeDef *DCMI_Handle = &hdcmi;
-I2C_HandleTypeDef *IIC_Handle = &hi2c1;
+I2C_HandleTypeDef *I2C_Handle = &hi2c1;
+SRAM_HandleTypeDef *SRAM_Handle = &hsram1;
+SRAM_HandleTypeDef *LCD_Handle = &hsram2;
+DMA_HandleTypeDef *SRAMToLCD_DMA_Handle = &hdma_memtomem_dma2_stream0;
 
 /* USER CODE END PV */
 
@@ -158,7 +162,7 @@ int main(void)
   MX_TouchGFX_Init();
   /* USER CODE BEGIN 2 */
     //printf("------stm32f407-----------\r\n");
-    LCD_Init();
+    
     ui_frame();
     Bluetooth_init();
     Car_init();
@@ -657,12 +661,33 @@ static void MX_USART3_UART_Init(void)
 
 /**
   * Enable DMA controller clock
+  * Configure DMA for memory to memory transfers
+  *   hdma_memtomem_dma2_stream0
   */
 static void MX_DMA_Init(void)
 {
 
   /* DMA controller clock enable */
   __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* Configure DMA request hdma_memtomem_dma2_stream0 on DMA2_Stream0 */
+  hdma_memtomem_dma2_stream0.Instance = DMA2_Stream0;
+  hdma_memtomem_dma2_stream0.Init.Channel = DMA_CHANNEL_0;
+  hdma_memtomem_dma2_stream0.Init.Direction = DMA_MEMORY_TO_MEMORY;
+  hdma_memtomem_dma2_stream0.Init.PeriphInc = DMA_PINC_ENABLE;
+  hdma_memtomem_dma2_stream0.Init.MemInc = DMA_MINC_DISABLE;
+  hdma_memtomem_dma2_stream0.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+  hdma_memtomem_dma2_stream0.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+  hdma_memtomem_dma2_stream0.Init.Mode = DMA_NORMAL;
+  hdma_memtomem_dma2_stream0.Init.Priority = DMA_PRIORITY_HIGH;
+  hdma_memtomem_dma2_stream0.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+  hdma_memtomem_dma2_stream0.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+  hdma_memtomem_dma2_stream0.Init.MemBurst = DMA_MBURST_SINGLE;
+  hdma_memtomem_dma2_stream0.Init.PeriphBurst = DMA_PBURST_SINGLE;
+  if (HAL_DMA_Init(&hdma_memtomem_dma2_stream0) != HAL_OK)
+  {
+    Error_Handler( );
+  }
 
   /* DMA interrupt init */
   /* DMA2_Stream1_IRQn interrupt configuration */
@@ -783,10 +808,10 @@ static void MX_FSMC_Init(void)
   hsram1.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
   hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   /* Timing */
-  Timing.AddressSetupTime = 15;
+  Timing.AddressSetupTime = 5;
   Timing.AddressHoldTime = 15;
-  Timing.DataSetupTime = 255;
-  Timing.BusTurnAroundDuration = 15;
+  Timing.DataSetupTime = 7;
+  Timing.BusTurnAroundDuration = 1;
   Timing.CLKDivision = 16;
   Timing.DataLatency = 17;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
@@ -797,25 +822,25 @@ static void MX_FSMC_Init(void)
     Error_Handler( );
   }
 
-  /** Perform the SRAM4 memory initialization sequence
+  /** Perform the SRAM2 memory initialization sequence
   */
-  hsram4.Instance = FSMC_NORSRAM_DEVICE;
-  hsram4.Extended = FSMC_NORSRAM_EXTENDED_DEVICE;
-  /* hsram4.Init */
-  hsram4.Init.NSBank = FSMC_NORSRAM_BANK4;
-  hsram4.Init.DataAddressMux = FSMC_DATA_ADDRESS_MUX_DISABLE;
-  hsram4.Init.MemoryType = FSMC_MEMORY_TYPE_SRAM;
-  hsram4.Init.MemoryDataWidth = FSMC_NORSRAM_MEM_BUS_WIDTH_16;
-  hsram4.Init.BurstAccessMode = FSMC_BURST_ACCESS_MODE_DISABLE;
-  hsram4.Init.WaitSignalPolarity = FSMC_WAIT_SIGNAL_POLARITY_LOW;
-  hsram4.Init.WrapMode = FSMC_WRAP_MODE_DISABLE;
-  hsram4.Init.WaitSignalActive = FSMC_WAIT_TIMING_BEFORE_WS;
-  hsram4.Init.WriteOperation = FSMC_WRITE_OPERATION_ENABLE;
-  hsram4.Init.WaitSignal = FSMC_WAIT_SIGNAL_DISABLE;
-  hsram4.Init.ExtendedMode = FSMC_EXTENDED_MODE_DISABLE;
-  hsram4.Init.AsynchronousWait = FSMC_ASYNCHRONOUS_WAIT_DISABLE;
-  hsram4.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
-  hsram4.Init.PageSize = FSMC_PAGE_SIZE_NONE;
+  hsram2.Instance = FSMC_NORSRAM_DEVICE;
+  hsram2.Extended = FSMC_NORSRAM_EXTENDED_DEVICE;
+  /* hsram2.Init */
+  hsram2.Init.NSBank = FSMC_NORSRAM_BANK4;
+  hsram2.Init.DataAddressMux = FSMC_DATA_ADDRESS_MUX_DISABLE;
+  hsram2.Init.MemoryType = FSMC_MEMORY_TYPE_SRAM;
+  hsram2.Init.MemoryDataWidth = FSMC_NORSRAM_MEM_BUS_WIDTH_16;
+  hsram2.Init.BurstAccessMode = FSMC_BURST_ACCESS_MODE_DISABLE;
+  hsram2.Init.WaitSignalPolarity = FSMC_WAIT_SIGNAL_POLARITY_LOW;
+  hsram2.Init.WrapMode = FSMC_WRAP_MODE_DISABLE;
+  hsram2.Init.WaitSignalActive = FSMC_WAIT_TIMING_BEFORE_WS;
+  hsram2.Init.WriteOperation = FSMC_WRITE_OPERATION_ENABLE;
+  hsram2.Init.WaitSignal = FSMC_WAIT_SIGNAL_DISABLE;
+  hsram2.Init.ExtendedMode = FSMC_EXTENDED_MODE_DISABLE;
+  hsram2.Init.AsynchronousWait = FSMC_ASYNCHRONOUS_WAIT_DISABLE;
+  hsram2.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
+  hsram2.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   /* Timing */
   Timing.AddressSetupTime = 2;
   Timing.AddressHoldTime = 15;
@@ -826,7 +851,7 @@ static void MX_FSMC_Init(void)
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
 
-  if (HAL_SRAM_Init(&hsram4, &Timing, NULL) != HAL_OK)
+  if (HAL_SRAM_Init(&hsram2, &Timing, NULL) != HAL_OK)
   {
     Error_Handler( );
   }
@@ -853,7 +878,8 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	  loop();
+    osDelay(10);
   }
   /* USER CODE END 5 */
 }
@@ -872,7 +898,7 @@ void StartGUITask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1000);
+    osDelay(10);
   }
   /* USER CODE END StartGUITask */
 }

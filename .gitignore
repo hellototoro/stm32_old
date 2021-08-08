@@ -1,5 +1,6 @@
 # eclipse stuff
 Debug/
+.settings/
 
 # TouchGFX
 TouchGFX/build/

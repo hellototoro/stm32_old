@@ -101,6 +101,8 @@ public:
         TouchGFXGeneratedHAL::flushFrameBuffer();
     }
 
+    virtual void copyFrameBufferBlockToLCD(const touchgfx::Rect& rect);
+
     /**
      * @fn virtual void TouchGFXHAL::flushFrameBuffer(const Rect& rect);
      *

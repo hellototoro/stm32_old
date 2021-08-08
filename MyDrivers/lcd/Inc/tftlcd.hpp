@@ -11,20 +11,29 @@
 namespace MyDrivers {
 
 #include "main.h"
+#include "Inc/display.hpp"
 
 enum class displayDir{
     vertical = 0,
     horizontal
 };
 
-class tftlcd {
+class tftlcd : public MyApplications::display {
 public:
-	tftlcd();
-	void init(void);
-	void setCursor(uint16_t x,uint16_t y);
-	void setWindow(uint16_t x,uint16_t y,uint16_t width,uint16_t height);
-	void setDisplayDir(displayDir _displayDir);
-	virtual ~tftlcd();
+    tftlcd();
+    virtual void showChar(uint16_t x,uint16_t y,char ch);
+    virtual void showString(uint16_t x,uint16_t y,char* str);
+    virtual void showPicture(uint16_t x,uint16_t y,char* pic);
+    virtual void displayOn(void);
+    virtual void displayOff(void);
+    virtual MyApplications::display::display_info getInfo(void);
+    virtual ~tftlcd();
+
+private:
+    void init(void);
+    void setCursor(uint16_t x,uint16_t y);
+    void setWindow(uint16_t x,uint16_t y,uint16_t width,uint16_t height);
+    void setDisplayDir(displayDir _displayDir);
 };
 
 } /* namespace MyDrivers */

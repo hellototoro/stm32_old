@@ -12,7 +12,7 @@
 #define I2C_TIMEOUT  100 /*<! Value of Timeout when I2C communication fails */
 
 
-extern I2C_HandleTypeDef *IIC_Handle;
+extern I2C_HandleTypeDef *I2C_Handle;
 
 /**
   * @brief  Manages error callback by re-initializing I2C.
@@ -21,12 +21,12 @@ extern I2C_HandleTypeDef *IIC_Handle;
 static void I2Cx_Error(uint8_t Addr)
 {
   /* De-initialize the IOE comunication BUS */
-  //HAL_I2C_DeInit(IIC_Handle);
+  //HAL_I2C_DeInit(I2C_Handle);
 
   /* Re-Initiaize the IOE comunication BUS */
   //I2Cx_Init();
-  HAL_I2C_MspInit(IIC_Handle);
-  HAL_I2C_Init(IIC_Handle);
+  HAL_I2C_MspInit(I2C_Handle);
+  HAL_I2C_Init(I2C_Handle);
 }
 
 /**
@@ -40,7 +40,7 @@ static uint8_t I2Cx_Read(uint8_t Addr, uint8_t Reg)
   HAL_StatusTypeDef status = HAL_OK;
   uint8_t Value = 0;
 
-  status = HAL_I2C_Mem_Read(IIC_Handle, Addr, Reg, I2C_MEMADD_SIZE_8BIT, &Value, 1, I2C_TIMEOUT);
+  status = HAL_I2C_Mem_Read(I2C_Handle, Addr, Reg, I2C_MEMADD_SIZE_8BIT, &Value, 1, I2C_TIMEOUT);
 
   /* Check the communication status */
   if(status != HAL_OK)
@@ -62,7 +62,7 @@ static void I2Cx_Write(uint8_t Addr, uint8_t Reg, uint8_t Value)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
-  status = HAL_I2C_Mem_Write(IIC_Handle, Addr, (uint16_t)Reg, I2C_MEMADD_SIZE_8BIT, &Value, 1, I2C_TIMEOUT);
+  status = HAL_I2C_Mem_Write(I2C_Handle, Addr, (uint16_t)Reg, I2C_MEMADD_SIZE_8BIT, &Value, 1, I2C_TIMEOUT);
 
   /* Check the communication status */
   if(status != HAL_OK)
@@ -85,7 +85,7 @@ static void I2Cx_Write(uint8_t Addr, uint8_t Reg, uint8_t Value)
 //{
 //  HAL_StatusTypeDef status = HAL_OK;
 //
-//  status = HAL_I2C_Mem_Read(IIC_Handle, Addr, (uint16_t)Reg, MemAddress, Buffer, Length, I2C_TIMEOUT);
+//  status = HAL_I2C_Mem_Read(I2C_Handle, Addr, (uint16_t)Reg, MemAddress, Buffer, Length, I2C_TIMEOUT);
 //
 //  /* Check the communication status */
 //  if(status != HAL_OK)
@@ -109,7 +109,7 @@ static void I2Cx_Write(uint8_t Addr, uint8_t Reg, uint8_t Value)
 //{
 //  HAL_StatusTypeDef status = HAL_OK;
 //
-//  status = HAL_I2C_Mem_Write(IIC_Handle, Addr, (uint16_t)Reg, MemAddress, Buffer, Length, I2C_TIMEOUT);
+//  status = HAL_I2C_Mem_Write(I2C_Handle, Addr, (uint16_t)Reg, MemAddress, Buffer, Length, I2C_TIMEOUT);
 //
 //  /* Check the communication status */
 //  if(status != HAL_OK)
@@ -129,7 +129,7 @@ static void I2Cx_Write(uint8_t Addr, uint8_t Reg, uint8_t Value)
   */
 //static HAL_StatusTypeDef I2Cx_IsDeviceReady(uint16_t DevAddress, uint32_t Trials)
 //{
-//  return (HAL_I2C_IsDeviceReady(IIC_Handle, DevAddress, Trials, I2C_TIMEOUT));
+//  return (HAL_I2C_IsDeviceReady(I2C_Handle, DevAddress, Trials, I2C_TIMEOUT));
 //}
 
 

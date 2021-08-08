@@ -10,10 +10,30 @@
 
 namespace MyApplications {
 
+#include "main.h"
+
 class display {
 public:
-	display();
-	virtual ~display();
+    class display_info {
+    public:
+        uint16_t id;
+        char type[20];
+        class resolution {
+        public:
+            uint16_t weight;
+            uint16_t height;
+        };
+    };
+
+public:
+    display();
+    virtual void showChar(uint16_t x,uint16_t y,char ch) = 0;
+    virtual void showString(uint16_t x,uint16_t y,char* str) = 0;
+    virtual void showPicture(uint16_t x,uint16_t y,char* pic) = 0;
+    virtual void displayOn(void) = 0;
+    virtual void displayOff(void) = 0;
+    virtual display_info getInfo(void) = 0;
+    virtual ~display();
 };
 
 } /* namespace MyApplications */
