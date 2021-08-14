@@ -25,6 +25,8 @@ public:
      */
     virtual void deactivate();
 
+    void updateRTC_Time(void);
+
     virtual ~clockScreenPresenter() {};
 
 private:

@@ -1,4 +1,9 @@
 #include <gui/clockscreen_screen/clockScreenView.hpp>
+#include "Inc/calendar.hpp"
+#include <led/Inc/led.h>
+
+extern MyApplications::calendar rtc_Calendar;
+extern led led1;
 
 clockScreenView::clockScreenView()
 {
@@ -8,6 +13,9 @@ clockScreenView::clockScreenView()
 void clockScreenView::setupScreen()
 {
     clockScreenViewBase::setupScreen();
+
+    //add by huangjian at 2021.08.14
+    updateRTC_Time();
 }
 
 void clockScreenView::tearDownScreen()
@@ -15,26 +23,16 @@ void clockScreenView::tearDownScreen()
     clockScreenViewBase::tearDownScreen();
 }
 
-void clockScreenView::handleTickEvent()
+void clockScreenView::updateRTC_Time(void)
 {
-   tickCounter++;
-
-    if (tickCounter % 60 == 0)
-    {
-        if (++analogSeconds >= 60)
-        {
-            analogSeconds = 0;
-            if (++analogMinutes >= 60)
-            {
-                analogMinutes = 0;
-                if (++analogHours >= 24)
-                {
-                    analogHours = 0;
-                }
-            }
-        }
-
-        // Update the clocks
-        clock.setTime24Hour(analogHours, analogMinutes, analogSeconds);
+    if (clock.isVisible()) {
+        RTC_TimeTypeDef RTC_Time = rtc_Calendar.getRTC_Time();
+        clock.setTime24Hour(RTC_Time.Hours, RTC_Time.Minutes, RTC_Time.Seconds);
     }
+}
+
+void clockScreenView::setTimer(void)
+{
+    rtc_Calendar.setRTC_Time();
+    led1.toggle();
 }

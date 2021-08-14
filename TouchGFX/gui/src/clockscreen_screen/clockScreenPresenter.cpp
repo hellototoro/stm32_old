@@ -16,3 +16,8 @@ void clockScreenPresenter::deactivate()
 {
 
 }
+
+void clockScreenPresenter::updateRTC_Time(void)
+{
+    view.updateRTC_Time();
+}

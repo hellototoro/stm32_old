@@ -5,9 +5,11 @@
 #include <TouchGFXHAL.hpp>
 #include "display/Inc/tftlcd_picture.h"
 #include "Components/ft5316/ft5316.h"
+#include <Inc/calendar.hpp>
 #include "cmsis_os.h"
 
 //bsp_camera camera;
+MyApplications::calendar rtc_Calendar;
 led led1(1);
 led led2(2);
 extern osSemaphoreId touchSignalHandle;
@@ -58,6 +60,7 @@ void setup(void)
 {
     tftlcd.s6d04d1::init();
     initTouch();
+    rtc_Calendar.init();
     //tftlcd.s6d04d1::drawRGBImage(0, 0, 400, 240, (uint8_t *)gImage_ff);
 
     //camera.init(CAMERA_R320x240);

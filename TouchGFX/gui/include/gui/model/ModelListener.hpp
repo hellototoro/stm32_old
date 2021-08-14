@@ -14,6 +14,7 @@ public:
     {
         model = m;
     }
+    virtual void updateRTC_Time(void) {};
 protected:
     Model* model;
 };

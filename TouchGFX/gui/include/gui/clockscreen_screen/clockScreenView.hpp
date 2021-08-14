@@ -12,13 +12,10 @@ public:
     virtual void setupScreen();
     virtual void tearDownScreen();
 
-    void handleTickEvent();
+    void updateRTC_Time(void);
+    void setTimer(void);
 
 protected:
-    uint8_t analogSeconds;
-    uint8_t analogMinutes;
-    uint8_t analogHours;
-    uint32_t tickCounter;
  };
 
 #endif // CLOCKSCREENVIEW_HPP

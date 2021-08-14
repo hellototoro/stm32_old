@@ -91,7 +91,7 @@ I2C_HandleTypeDef *I2C_Handle = &hi2c1;
 SRAM_HandleTypeDef *SRAM_Handle = &hsram1;
 SRAM_HandleTypeDef *LCD_Handle = &hsram2;
 DMA_HandleTypeDef *SRAMToLCD_DMA_Handle = &hdma_memtomem_dma2_stream0;
-
+RTC_HandleTypeDef *RtcHandle = &hrtc;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -400,30 +400,51 @@ static void MX_RTC_Init(void)
   }
 
   /* USER CODE BEGIN Check_RTC_BKUP */
+  if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0) != 0x32F2)
+  {  
 
   /* USER CODE END Check_RTC_BKUP */
 
   /** Initialize RTC and set the Time and Date
   */
-  sTime.Hours = 0x13;
-  sTime.Minutes = 0x0;
-  sTime.Seconds = 0x0;
+  sTime.Hours = 10;
+  sTime.Minutes = 0;
+  sTime.Seconds = 0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
   {
     Error_Handler();
   }
-  sDate.WeekDay = RTC_WEEKDAY_SATURDAY;
-  sDate.Month = RTC_MONTH_AUGUST;
-  sDate.Date = 0x14;
-  sDate.Year = 0x0;
+  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+  sDate.Month = RTC_MONTH_JANUARY;
+  sDate.Date = 1;
+  sDate.Year = 21;
 
-  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
+  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN RTC_Init 2 */
+    HAL_RTCEx_BKUPWrite(&hrtc,RTC_BKP_DR0,0x32F2);
+  }
+  else
+  {
+    /* Check if the Power On Reset flag is set */  
+    if(__HAL_RCC_GET_FLAG(RCC_FLAG_PORRST) != RESET)
+    {
+      /* Turn on LED2: Power on reset occurred */
+      //BSP_LED_On(LED2);
+    }
+    /* Check if Pin Reset flag is set */
+    if(__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST) != RESET)
+    {
+      /* Turn on LED4: External reset occurred */
+      //BSP_LED_On(LED4);
+    }
+    /* Clear source Reset Flag */
+    __HAL_RCC_CLEAR_RESET_FLAGS();
+  }
 
   /* USER CODE END RTC_Init 2 */
 

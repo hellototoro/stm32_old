@@ -270,6 +270,24 @@
             "Clickable": false,
             "Fadeable": false,
             "Moveable": false
+          },
+          {
+            "Type": "Button",
+            "Pressed": "__designer\\Blue_Buttons_Round_Edge_icon_button_pressed.png",
+            "Released": "__designer\\Blue_Buttons_Round_Edge_icon_button.png",
+            "Alpha": 255,
+            "Style": "Style1",
+            "Name": "setTimerButton",
+            "X": 14,
+            "Y": 91,
+            "Width": 60,
+            "Height": 60,
+            "Visible": true,
+            "LockPosition": false,
+            "Draggable": false,
+            "Clickable": false,
+            "Fadeable": false,
+            "Moveable": false
           }
         ],
         "Interactions": [
@@ -285,6 +303,29 @@
               "ScreenTransitionType": "ScreenTransitionCover",
               "ScreenTransitionDirection": "West",
               "ActionComponent": "mainScreen"
+            }
+          },
+          {
+            "InteractionName": "setTimerButtonInteraction",
+            "HasCompletedTrigger": false,
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "setTimerButton"
+            },
+            "Action": {
+              "Type": "ActionCustom",
+              "FunctionName": "setTimer"
+            }
+          },
+          {
+            "InteractionName": "hideSetTimerButtonInteraction",
+            "HasCompletedTrigger": false,
+            "Trigger": {
+              "Type": "TriggerScreenTransitionBegins"
+            },
+            "Action": {
+              "Type": "ActionHide",
+              "ActionComponent": "setTimerButton"
             }
           }
         ],
