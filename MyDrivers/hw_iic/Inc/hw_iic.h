@@ -16,4 +16,9 @@ extern void CAMERA_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value);
 extern uint8_t CAMERA_IO_Read(uint8_t Addr, uint8_t Reg);
 extern void CAMERA_Delay(uint32_t Delay);
 
+extern void TOUCH_PAD_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value);
+extern uint8_t TOUCH_PAD_IO_Read(uint8_t Addr, uint8_t Reg);
+extern uint8_t TOUCH_PAD_IO_multiRead(uint8_t Addr, uint8_t Reg, uint8_t *pData, uint16_t Size);
+extern void TOUCH_PAD_Delay(uint32_t Delay);
+
 #endif /* MYDRIVERS_HW_IIC_INC_HW_IIC_H_ */

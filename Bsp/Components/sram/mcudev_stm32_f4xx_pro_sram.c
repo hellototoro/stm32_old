@@ -1,4 +1,4 @@
-#include "mcudev_stm32_f4xx_pro/sram/mcudev_stm32_f4xx_pro_sram.h"
+#include "Components/sram/mcudev_stm32_f4xx_pro_sram.h"
 
 /**
   * @brief  Reads an amount of data from the SRAM device in polling mode.

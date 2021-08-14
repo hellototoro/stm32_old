@@ -17,15 +17,18 @@
 #include <TouchGFXHAL.hpp>
 
 /* USER CODE BEGIN TouchGFXHAL.cpp */
-#include <lcd/Inc/tftlcd.h>
 #include <touchgfx/hal/OSWrappers.hpp>
+#include <touchgfx/hal/GPIO.hpp>
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
+
+MyDrivers::display tftlcd;
+
 bool os_inited = false;
 volatile bool firstFrameReadyToDisplay = false;
-static uint16_t* currFbBase = 0;
+//static uint16_t* currFbBase = 0;
 
 
 using namespace touchgfx;
@@ -37,7 +40,8 @@ void TouchGFXHAL::initialize()
     // To overwrite the generated implementation, omit call to parent function
     // and implemented needed functionality here.
     // Please note, HAL::initialize() must be called to initialize the framework.
-    LCD_Init();
+    //LCD_Init();
+    //tftlcd.s6d04d1::init();
 
     TouchGFXGeneratedHAL::initialize();
     lockDMAToFrontPorch(false);
@@ -83,7 +87,7 @@ void TouchGFXHAL::copyFrameBufferBlockToLCD(const touchgfx::Rect& rect)
     for (height = 0; height < rect.height ; height++)
     {
         ptr = getClientFrameBuffer() + rect.x + (height + rect.y) * HAL::DISPLAY_WIDTH;
-        LCD_IO_WriteMultipleData((uint16_t*)ptr, rect.width);
+        LCD_IO_WriteMultipleData(ptr, rect.width);
     }
 }
 
@@ -109,8 +113,10 @@ void TouchGFXHAL::flushFrameBuffer(const touchgfx::Rect& rect)
     //uint16_t* fb = HAL::lockFrameBuffer();
 
     //Prepare display: Set cursor, write to display gram as described previously in this scenario
-    LCD_SetWindow(rect.x, rect.y, rect.width, rect.height);
-    LCD_WriteRAM_Prepare();		//�??始写入GRAM
+    //LCD_SetWindow(rect.x, rect.y, rect.width, rect.height);
+    tftlcd.s6d04d1::setDisplayWindow(rect.x, rect.y, rect.width, rect.height);
+    //LCD_WriteRAM_Prepare();		//�???始写入GRAM
+    tftlcd.s6d04d1::prepareWrite();
 
     //Try to take a display semaphore - Always free at this point
     //xSemaphoreTake(screen_frame_buffer_sem, portMAX_DELAY);
@@ -190,6 +196,31 @@ void TouchGFXHAL::enableLCDControllerInterrupt()
     TouchGFXGeneratedHAL::enableLCDControllerInterrupt();
 }
 
+extern "C" {
+void TE_Handler(void)
+{
+    /* Unblock TouchGFX Engine Main Loop to render next frame */
+    OSWrappers::signalVSync();
+    #if 0
+    if (PinStatus) /* Raising edge : entering Active Area */
+    {
+        HAL::getInstance()->vSync();
+        OSWrappers::signalVSync();
+        // Swap frame buffers immediately instead of waiting for the task to be scheduled in.
+        // Note: task will also swap when it wakes up, but that operation is guarded and will not have
+        // any effect if already swapped.
+        HAL::getInstance()->swapFrameBuffers();
+        GPIO::set(GPIO::VSYNC_FREQ);
+    }
+    else /* Falling edge : exiting active area */
+    {
+        GPIO::clear(GPIO::VSYNC_FREQ);
+        HAL::getInstance()->frontPorchEntered();
+    }
+    #endif
+}
+
+}
 /* USER CODE END TouchGFXHAL.cpp */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

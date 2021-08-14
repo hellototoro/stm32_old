@@ -92,10 +92,12 @@ void Error_Handler(void);
 #define left_back_motor_A_GPIO_Port GPIOC
 #define left_back_motor_B_Pin GPIO_PIN_5
 #define left_back_motor_B_GPIO_Port GPIOC
-#define left_back_motor_pwm_Pin GPIO_PIN_14
-#define left_back_motor_pwm_GPIO_Port GPIOB
-#define right_back_motor_pwm_Pin GPIO_PIN_15
-#define right_back_motor_pwm_GPIO_Port GPIOB
+#define TOUCH_IRQ_Pin GPIO_PIN_1
+#define TOUCH_IRQ_GPIO_Port GPIOB
+#define TOUCH_IRQ_EXTI_IRQn EXTI1_IRQn
+#define LCD_TE_SIGNAL_Pin GPIO_PIN_15
+#define LCD_TE_SIGNAL_GPIO_Port GPIOB
+#define LCD_TE_SIGNAL_EXTI_IRQn EXTI15_10_IRQn
 #define left_back_motor_encoderA_Pin GPIO_PIN_8
 #define left_back_motor_encoderA_GPIO_Port GPIOA
 #define left_back_motor_encoderB_Pin GPIO_PIN_9

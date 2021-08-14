@@ -6,9 +6,9 @@
   * @author  jee
   ******************************************************************************
   */
+//#include <display/Inc/tftlcd.h>
 #include "../../MyApplications/Inc/bluetooth.h"
 
-#include <lcd/Inc/tftlcd.h>
 #include "../../MyApplications/Inc/car_control.h"
 #include "../../MyApplications/Inc/static_queue.h"
 

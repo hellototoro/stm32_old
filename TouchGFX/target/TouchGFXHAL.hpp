@@ -20,6 +20,7 @@
 /* USER CODE BEGIN TouchGFXHAL.hpp */
 
 #include <TouchGFXGeneratedHAL.hpp>
+#include <display/Inc/display.hpp>
 
 /**
  * @class TouchGFXHAL
@@ -157,6 +158,11 @@ protected:
     virtual void setTFTFrameBuffer(uint16_t* adr);
 };
 
+extern MyDrivers::display tftlcd;
+
+extern "C" {
+extern void TE_Handler(void);
+}
 /* USER CODE END TouchGFXHAL.hpp */
 
 #endif // TouchGFXHAL_HPP

@@ -18,6 +18,10 @@
 /* USER CODE BEGIN STM32TouchController */
 
 #include <STM32TouchController.hpp>
+#include "cmsis_os.h"
+#include "Components/ft5316/ft5316.h"
+
+extern osMessageQId mid_MsgQueueHandle;
 
 void STM32TouchController::init()
 {
@@ -39,6 +43,13 @@ bool STM32TouchController::sampleTouch(int32_t& x, int32_t& y)
      * By default sampleTouch is called every tick, this can be adjusted by HAL::setTouchSampleRate(int8_t);
      *
      */
+    osEvent evt = osMessageGet(mid_MsgQueueHandle, 0U);
+    if (evt.status == osEventMessage) {
+        touchPad *msg = (touchPad*)evt.value.p;
+        x = msg->x[0];
+        y = msg->y[0];
+        return true;
+    }
     return false;
 }
 

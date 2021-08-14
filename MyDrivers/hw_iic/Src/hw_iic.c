@@ -9,7 +9,7 @@
 #include "hw_iic/Inc/hw_iic.h"
 
 
-#define I2C_TIMEOUT  100 /*<! Value of Timeout when I2C communication fails */
+#define I2C_TIMEOUT  1000 /*<! Value of Timeout when I2C communication fails */
 
 
 extern I2C_HandleTypeDef *I2C_Handle;
@@ -51,6 +51,29 @@ static uint8_t I2Cx_Read(uint8_t Addr, uint8_t Reg)
 
   return Value;
 }
+
+/**
+  * @brief  Reads a multi data.
+  * @param  Addr: I2C address
+  * @param  Reg: Reg address
+  * @status Data to be read
+  */
+static uint8_t I2Cx_multiRead(uint8_t Addr, uint8_t Reg, uint8_t *pData, uint16_t Size)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  status = HAL_I2C_Mem_Read(I2C_Handle, Addr, Reg, I2C_MEMADD_SIZE_8BIT, pData, Size, I2C_TIMEOUT);
+
+  /* Check the communication status */
+  if(status != HAL_OK)
+  {
+    /* Execute user timeout callback */
+    I2Cx_Error(Addr);
+  }
+
+  return status;
+}
+
 
 /**
   * @brief  Writes a single data.
@@ -176,3 +199,50 @@ void CAMERA_Delay(uint32_t Delay)
 {
   HAL_Delay(Delay);
 }
+
+/*******************************************************************************
+                            LINK OPERATIONS
+*******************************************************************************/
+/***************************** LINK TOUCH PAD ************************************/
+/**
+  * @brief  Camera writes single data.
+  * @param  Addr: I2C address
+  * @param  Reg: Reg address
+  * @param  Value: Data to be written
+  */
+void TOUCH_PAD_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value)
+{
+  I2Cx_Write(Addr, Reg, Value);
+}
+
+/**
+  * @brief  Camera reads single data.
+  * @param  Addr: I2C address
+  * @param  Reg: Reg address
+  * @retval Read data
+  */
+uint8_t TOUCH_PAD_IO_Read(uint8_t Addr, uint8_t Reg)
+{
+  return I2Cx_Read(Addr, Reg);
+}
+
+/**
+  * @brief  Camera reads single data.
+  * @param  Addr: I2C address
+  * @param  Reg: Reg address
+  * @retval Read data
+  */
+uint8_t TOUCH_PAD_IO_multiRead(uint8_t Addr, uint8_t Reg, uint8_t *pData, uint16_t Size)
+{
+  return I2Cx_multiRead(Addr, Reg, pData, Size);
+}
+
+/**
+  * @brief  Camera delay.
+  * @param  Delay: Delay in ms
+  */
+void TOUCH_PAD_Delay(uint32_t Delay)
+{
+  HAL_Delay(Delay);
+}
+

@@ -25,11 +25,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "print/Inc/print.h"
-#include "Inc/bluetooth.h"
-#include "Inc/car_control.h"
 #include "Inc/mainpp.hpp"
-#include "lcd/Inc/tftlcd.h"
-#include "Inc/ui.h"
+#include "Components/ft5316/ft5316.h"
 
 /* USER CODE END Includes */
 
@@ -61,7 +58,6 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim9;
-TIM_HandleTypeDef htim12;
 
 UART_HandleTypeDef huart3;
 
@@ -76,13 +72,18 @@ osStaticThreadDef_t GUITaskControlBlock;
 osThreadId LEDTaskHandle;
 uint32_t LEDTaskBuffer[ 128 ];
 osStaticThreadDef_t LEDTaskControlBlock;
+osMessageQId mid_MsgQueueHandle;
+uint8_t mid_MsgQueueBuffer[ 2 * sizeof( touchPad ) ];
+osStaticMessageQDef_t mid_MsgQueueControlBlock;
+osSemaphoreId touchSignalHandle;
+osStaticSemaphoreDef_t touchSignalControlBlock;
 /* USER CODE BEGIN PV */
 UART_HandleTypeDef *UartHandle = &huart3;
 UART_HandleTypeDef *BluetoothUart = &huart3;
 PWM_HandleTypeDef *left_front_motor_pwm = &htim9;
 PWM_HandleTypeDef *right_front_motor_pwm = &htim9;
-PWM_HandleTypeDef *left_back_motor_pwm = &htim12;
-PWM_HandleTypeDef *right_back_motor_pwm = &htim12;
+//PWM_HandleTypeDef *left_back_motor_pwm = &htim12;
+//PWM_HandleTypeDef *right_back_motor_pwm = &htim12;
 DCMI_HandleTypeDef *DCMI_Handle = &hdcmi;
 I2C_HandleTypeDef *I2C_Handle = &hi2c1;
 SRAM_HandleTypeDef *SRAM_Handle = &hsram1;
@@ -98,7 +99,6 @@ static void MX_TIM5_Init(void);
 static void MX_FSMC_Init(void);
 static void MX_TIM9_Init(void);
 static void MX_DMA_Init(void);
-static void MX_TIM12_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_DCMI_Init(void);
 static void MX_TIM7_Init(void);
@@ -151,7 +151,6 @@ int main(void)
   MX_FSMC_Init();
   MX_TIM9_Init();
   MX_DMA_Init();
-  MX_TIM12_Init();
   MX_I2C1_Init();
   MX_DCMI_Init();
   MX_TIM7_Init();
@@ -162,18 +161,18 @@ int main(void)
   MX_TouchGFX_Init();
   /* USER CODE BEGIN 2 */
     //printf("------stm32f407-----------\r\n");
-    
-    ui_frame();
-    Bluetooth_init();
-    Car_init();
     setup();
-//    control_led(ON);
 
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
+
+  /* Create the semaphores(s) */
+  /* definition and creation of touchSignal */
+  osSemaphoreStaticDef(touchSignal, &touchSignalControlBlock);
+  touchSignalHandle = osSemaphoreCreate(osSemaphore(touchSignal), 1);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
@@ -182,6 +181,11 @@ int main(void)
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* definition and creation of mid_MsgQueue */
+  osMessageQStaticDef(mid_MsgQueue, 2, touchPad, mid_MsgQueueBuffer, &mid_MsgQueueControlBlock);
+  mid_MsgQueueHandle = osMessageCreate(osMessageQ(mid_MsgQueue), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -580,53 +584,6 @@ static void MX_TIM9_Init(void)
 }
 
 /**
-  * @brief TIM12 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM12_Init(void)
-{
-
-  /* USER CODE BEGIN TIM12_Init 0 */
-
-  /* USER CODE END TIM12_Init 0 */
-
-  TIM_OC_InitTypeDef sConfigOC = {0};
-
-  /* USER CODE BEGIN TIM12_Init 1 */
-
-  /* USER CODE END TIM12_Init 1 */
-  htim12.Instance = TIM12;
-  htim12.Init.Prescaler = 4-1;
-  htim12.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim12.Init.Period = 42000-1;
-  htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim12.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
-  if (HAL_TIM_PWM_Init(&htim12) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigOC.Pulse = 21000-1;
-  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM12_Init 2 */
-
-  /* USER CODE END TIM12_Init 2 */
-  HAL_TIM_MspPostInit(&htim12);
-
-}
-
-/**
   * @brief USART3 Initialization Function
   * @param None
   * @retval None
@@ -711,8 +668,8 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
@@ -751,6 +708,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : TOUCH_IRQ_Pin */
+  GPIO_InitStruct.Pin = TOUCH_IRQ_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(TOUCH_IRQ_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LCD_TE_SIGNAL_Pin */
+  GPIO_InitStruct.Pin = LCD_TE_SIGNAL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(LCD_TE_SIGNAL_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pins : DCMI_SCL_Pin DCMI_SDA_Pin */
   GPIO_InitStruct.Pin = DCMI_SCL_Pin|DCMI_SDA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
@@ -771,6 +740,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(DCMI_RESET_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
@@ -879,7 +855,6 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
 	  loop();
-    osDelay(10);
   }
   /* USER CODE END 5 */
 }
