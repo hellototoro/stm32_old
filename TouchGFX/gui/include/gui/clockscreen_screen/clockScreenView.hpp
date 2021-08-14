@@ -11,7 +11,14 @@ public:
     virtual ~clockScreenView() {}
     virtual void setupScreen();
     virtual void tearDownScreen();
+
+    void handleTickEvent();
+
 protected:
-};
+    uint8_t analogSeconds;
+    uint8_t analogMinutes;
+    uint8_t analogHours;
+    uint32_t tickCounter;
+ };
 
 #endif // CLOCKSCREENVIEW_HPP

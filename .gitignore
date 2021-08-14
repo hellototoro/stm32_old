@@ -7,6 +7,7 @@ TouchGFX/build/
 TouchGFX/generated/
 TouchGFX/target/generated/
 TouchGFX/simulator/
+TouchGFX/assets/
 
 # VScode
 .vscode

@@ -201,10 +201,10 @@
         "Components": [
           {
             "Type": "AnalogClock",
-            "FileNameBackground": "__designer\\Blue_Clocks_Backgrounds_clock_modern_background.png",
+            "FileNameBackground": "__designer\\Blue_Clocks_Backgrounds_clock_standard_background.png",
             "RotationCenterX": 116,
             "RotationCenterY": 116,
-            "Style": "Style3",
+            "Style": "Style1",
             "UseAnimation": true,
             "Duration": 0,
             "Easing": "Back",
@@ -212,23 +212,23 @@
             "ClockHands": [
               {
                 "Type": "HourClockHand",
-                "FileNameHandImage": "__designer\\Blue_Clocks_Hands_clock_modern_hour_hand.png",
-                "RotationCenterX": 3,
-                "RotationCenterY": 93,
+                "FileNameHandImage": "__designer\\Blue_Clocks_Hands_clock_standard_hour_hand.png",
+                "RotationCenterX": 7,
+                "RotationCenterY": 52,
                 "HourHandMinuteCorrection": false
               },
               {
                 "Type": "MinuteClockHand",
-                "FileNameHandImage": "__designer\\Blue_Clocks_Hands_clock_modern_minute_hand.png",
-                "RotationCenterX": 8,
-                "RotationCenterY": 74,
+                "FileNameHandImage": "__designer\\Blue_Clocks_Hands_clock_standard_minute_hand.png",
+                "RotationCenterX": 7,
+                "RotationCenterY": 67,
                 "MinuteHandSecondCorrection": false
               },
               {
                 "Type": "SecondClockHand",
-                "FileNameHandImage": "__designer\\Blue_Clocks_Hands_clock_modern_second_hand.png",
+                "FileNameHandImage": "__designer\\Blue_Clocks_Hands_clock_standard_second_hand.png",
                 "RotationCenterX": 3,
-                "RotationCenterY": 88
+                "RotationCenterY": 66
               }
             ],
             "UseAmPm": false,
@@ -282,7 +282,8 @@
             },
             "Action": {
               "Type": "ActionGotoScreen",
-              "ScreenTransitionType": "ScreenTransitionNone",
+              "ScreenTransitionType": "ScreenTransitionCover",
+              "ScreenTransitionDirection": "West",
               "ActionComponent": "mainScreen"
             }
           }
