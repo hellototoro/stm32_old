@@ -19,7 +19,7 @@
 
 #include <STM32TouchController.hpp>
 #include "cmsis_os.h"
-#include "Components/ft5316/ft5316.h"
+#include "Inc/mainpp.hpp"
 
 extern osMessageQId mid_MsgQueueHandle;
 
@@ -45,7 +45,7 @@ bool STM32TouchController::sampleTouch(int32_t& x, int32_t& y)
      */
     osEvent evt = osMessageGet(mid_MsgQueueHandle, 0U);
     if (evt.status == osEventMessage) {
-        touchPad *msg = (touchPad*)evt.value.p;
+        touchDataDef *msg = (touchDataDef*)evt.value.p;
         x = msg->x[0];
         y = msg->y[0];
         return true;

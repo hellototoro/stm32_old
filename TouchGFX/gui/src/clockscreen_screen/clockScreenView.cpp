@@ -33,6 +33,6 @@ void clockScreenView::updateRTC_Time(void)
 
 void clockScreenView::setTimer(void)
 {
-    rtc_Calendar.setRTC_Time();
+    rtc_Calendar.setRTC_Time(10,10,0);
     led1.toggle();
 }

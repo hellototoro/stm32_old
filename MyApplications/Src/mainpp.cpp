@@ -4,16 +4,24 @@
 #include "Components/sram/mcudev_stm32_f4xx_pro_sram.h"
 #include <TouchGFXHAL.hpp>
 #include "display/Inc/tftlcd_picture.h"
-#include "Components/ft5316/ft5316.h"
+//#include "Components/ft5316/ft5316.h"
+#include <Components/ft5316/ft5316.hpp>
 #include <Inc/calendar.hpp>
 #include "cmsis_os.h"
 
-//bsp_camera camera;
+ft5316 touchPad(I2C_Handle);
 MyApplications::calendar rtc_Calendar;
 led led1(1);
 led led2(2);
+
+extern osMessageQId mid_MsgQueueHandle;
 extern osSemaphoreId touchSignalHandle;
 
+
+osThreadId touchPadTaskHandle;
+uint32_t touchPadTaskBuffer[ 128 ];
+osStaticThreadDef_t touchPadTaskControlBlock;
+void StartTouchPadTask(void const * argument);
 
 
 
@@ -59,9 +67,16 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 void setup(void)
 {
     tftlcd.s6d04d1::init();
-    initTouch();
+    //initTouch();
+    touchPad.init();
     rtc_Calendar.init();
     //tftlcd.s6d04d1::drawRGBImage(0, 0, 400, 240, (uint8_t *)gImage_ff);
+
+
+    //创建触摸板任务
+    /* definition and creation of touchPadTask */
+    osThreadStaticDef(touchPadTask, StartTouchPadTask, osPriorityNormal, 0, 128, touchPadTaskBuffer, &touchPadTaskControlBlock);
+    touchPadTaskHandle = osThreadCreate(osThread(touchPadTask), NULL);
 
     //camera.init(CAMERA_R320x240);
     //ov2640_set_rgb565_mode(CAMERA_I2C_ADDRESS);
@@ -76,7 +91,8 @@ void setup(void)
 
 void loop(void)
 {
-    toucuProc();
+    led1.toggle();
+    osDelay(1000);
     //TE_Handler();
     //if(image_updata)
     //{
@@ -84,4 +100,22 @@ void loop(void)
     //	LCD_ShowPicture2(0, 0, 400, 240,(uint16_t *)FrameBuffer);
     //	HAL_DCMI_Resume(DCMI_Handle);
     //}
+}
+
+
+/**
+* @brief Function implementing the touchPadTask thread.
+* @param argument: Not used
+* @retval None
+*/
+void StartTouchPadTask(void const * argument)
+{
+    touchDataDef touchData;
+    /* Infinite loop */
+    for(;;)
+    {
+        osSemaphoreWait (touchSignalHandle, osWaitForever);
+        touchPad.readData(touchData.x[0], touchData.y[0]);
+        osMessagePut (mid_MsgQueueHandle, (uint32_t)(&touchData), osWaitForever);
+    }
 }

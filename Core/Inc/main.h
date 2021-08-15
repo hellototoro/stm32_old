@@ -121,6 +121,7 @@ extern DCMI_HandleTypeDef *DCMI_Handle;
 extern SRAM_HandleTypeDef *SRAM_Handle;
 extern DMA_HandleTypeDef *SRAMToLCD_DMA_Handle;
 extern RTC_HandleTypeDef *RtcHandle;
+extern I2C_HandleTypeDef *I2C_Handle;
 
 /* USER CODE END Private defines */
 

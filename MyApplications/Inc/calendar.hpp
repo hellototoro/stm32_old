@@ -16,8 +16,10 @@ class calendar {
 public:
     calendar();
     void init(void);
-    void setRTC_Time(void);
+    void setRTC_Time(uint8_t hour, uint8_t minutes, uint8_t seconds);
+    void setRTC_Date(uint8_t year, uint8_t month, uint8_t day, uint8_t weekday);
     RTC_TimeTypeDef getRTC_Time(void);
+    RTC_DateTypeDef getRTC_Date(void);
     virtual ~calendar();
 private:
     RTC_TimeTypeDef RTC_Time;

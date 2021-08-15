@@ -26,7 +26,6 @@
 /* USER CODE BEGIN Includes */
 #include "print/Inc/print.h"
 #include "Inc/mainpp.hpp"
-#include "Components/ft5316/ft5316.h"
 
 /* USER CODE END Includes */
 
@@ -71,11 +70,8 @@ osThreadId defaultTaskHandle;
 osThreadId GUITaskHandle;
 uint32_t GUITaskBuffer[ 4096 ];
 osStaticThreadDef_t GUITaskControlBlock;
-osThreadId LEDTaskHandle;
-uint32_t LEDTaskBuffer[ 128 ];
-osStaticThreadDef_t LEDTaskControlBlock;
 osMessageQId mid_MsgQueueHandle;
-uint8_t mid_MsgQueueBuffer[ 2 * sizeof( touchPad ) ];
+uint8_t mid_MsgQueueBuffer[ 2 * sizeof( touchDataDef ) ];
 osStaticMessageQDef_t mid_MsgQueueControlBlock;
 osSemaphoreId touchSignalHandle;
 osStaticSemaphoreDef_t touchSignalControlBlock;
@@ -111,7 +107,6 @@ static void MX_SPI1_Init(void);
 static void MX_RTC_Init(void);
 void StartDefaultTask(void const * argument);
 void StartGUITask(void const * argument);
-void StartLEDTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -188,7 +183,7 @@ int main(void)
 
   /* Create the queue(s) */
   /* definition and creation of mid_MsgQueue */
-  osMessageQStaticDef(mid_MsgQueue, 2, touchPad, mid_MsgQueueBuffer, &mid_MsgQueueControlBlock);
+  osMessageQStaticDef(mid_MsgQueue, 2, touchDataDef, mid_MsgQueueBuffer, &mid_MsgQueueControlBlock);
   mid_MsgQueueHandle = osMessageCreate(osMessageQ(mid_MsgQueue), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -203,10 +198,6 @@ int main(void)
   /* definition and creation of GUITask */
   osThreadStaticDef(GUITask, StartGUITask, osPriorityNormal, 0, 4096, GUITaskBuffer, &GUITaskControlBlock);
   GUITaskHandle = osThreadCreate(osThread(GUITask), NULL);
-
-  /* definition and creation of LEDTask */
-  osThreadStaticDef(LEDTask, StartLEDTask, osPriorityNormal, 0, 128, LEDTaskBuffer, &LEDTaskControlBlock);
-  LEDTaskHandle = osThreadCreate(osThread(LEDTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -964,25 +955,6 @@ void StartGUITask(void const * argument)
     osDelay(10);
   }
   /* USER CODE END StartGUITask */
-}
-
-/* USER CODE BEGIN Header_StartLEDTask */
-/**
-* @brief Function implementing the LEDTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartLEDTask */
-void StartLEDTask(void const * argument)
-{
-  /* USER CODE BEGIN StartLEDTask */
-  /* Infinite loop */
-  for(;;)
-  {
-	  led2_toggle();
-    osDelay(1000);
-  }
-  /* USER CODE END StartLEDTask */
 }
 
 /**
