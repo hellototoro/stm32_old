@@ -10,6 +10,9 @@ TouchGFX/target/generated/
 TouchGFX/simulator/
 TouchGFX/assets/
 
+# Middlewares 
+/Middlewares/
+
 # VScode
 .vscode
 
