@@ -67,6 +67,7 @@ public:
     void displayStringAtLine(uint16_t Line, uint8_t *ptr);
     void displayStringAt(uint16_t Xpos, uint16_t Ypos, uint8_t *Text, Line_ModeTypdef Mode);
     void displayChar(uint16_t Xpos, uint16_t Ypos, uint8_t Ascii);
+    uint32_t getDisplayAddress();
     ~display();
 
 private:

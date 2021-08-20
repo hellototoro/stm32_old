@@ -10,6 +10,8 @@
 
 #include "main.h"
 
+namespace MyDrivers {
+
 enum class led_number {
 	number1 = 1,
 	number2
@@ -25,5 +27,6 @@ private:
 	void switch_led(bool_switch _switch);
 	int number;
 };
+}
 
 #endif /* MYDRIVERS_LED_LED_H_ */

@@ -1,6 +1,7 @@
 # eclipse stuff
-Debug/
-.settings/
+/Debug/
+/.settings/
+/Release/
 
 # TouchGFX
 TouchGFX/build/
@@ -14,5 +15,3 @@ TouchGFX/assets/
 
 # Emacs
 .#*
-
-# other

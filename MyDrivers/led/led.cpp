@@ -5,8 +5,9 @@
  *      Author: huang
  */
 
-#include <led/Inc/led.h>
+#include <led/led.hpp>
 
+namespace MyDrivers {
 
 led::led(int _number) : number { _number }
 {
@@ -52,3 +53,4 @@ void led::toggle(void)
 	}
 }
 
+}

@@ -2,10 +2,14 @@
 #define __OV2640_HPP
 
 #include "main.h"
+#include "hw_iic/hw_iic.hpp"
 
 class ov2640 {
 public:
-    uint8_t init(void);
+    ov2640(I2C_HandleTypeDef *_touchPad_IIC_Handle);
+    void resetChip(void);
+    uint8_t init(uint32_t resolution);
+    uint16_t readID(void);
     void set_rgb565_mode(void) ;
     void set_jpeg_mode(void) ;
     void auto_exposure(uint8_t level);
@@ -15,21 +19,32 @@ public:
     void contrast(uint8_t contrast);
     void special_effects(uint8_t eft);
     void color_bar(uint8_t sw);
-    void indow_set(uint16_t sx,uint16_t sy,uint16_t width,uint16_t height);
+    void window_set(uint16_t sx,uint16_t sy,uint16_t width,uint16_t height);
     uint8_t set_output_size(uint16_t width,uint16_t height);
     uint8_t imageWin_set(uint16_t offx,uint16_t offy,uint16_t width,uint16_t height);
     uint8_t imageSize_set(uint16_t width,uint16_t height);
     void control_led(bool_switch led_switch);
+private:
+    I2C_HandleTypeDef *camera_IIC_Handle;
+    MyDrivers::hw_iic ov2640_iic;
+
 };
 
+#define CAMERA_R160x120                 0x00   /* QQVGA Resolution                     */
+#define CAMERA_R320x240                 0x01   /* QVGA Resolution                      */
+#define CAMERA_R400x240                 0x02   /* 400x240 Resolution                      */
+#define CAMERA_R480x272                 0x03   /* 480x272 Resolution                   */
+#define CAMERA_R640x480                 0x04   /* VGA Resolution                       */
 
-#define OV2640_ADDRESS_ID       0X60  			//OV2640��ID
 
-#define OV2640_MID				0X7FA2
-#define OV2640_PID				0X2642
-#define OV2640_PID1				0X2642
-#define OV2640_PID2				0X2641
- //��ѡ��DSP��ַ(0XFF=0X00)ʱ,OV2640��DSP�Ĵ�����ַӳ���
+#define OV2640_ADDRESS_ID       0X60  			//OV2640器件地址
+
+/** 
+  * @brief  OV2640 ID  
+  */  
+#define  OV2640_ID    0x26
+
+/* OV2640 Registers definition when DSP bank selected (0xFF = 0x00) */
 #define OV2640_DSP_R_BYPASS     0x05
 #define OV2640_DSP_Qs           0x44
 #define OV2640_DSP_CTRL         0x50
@@ -65,7 +80,7 @@ public:
 #define OV2640_DSP_P_STATUS     0xFE
 #define OV2640_DSP_RA_DLMT      0xFF 
 
-//��ѡ�񴫸�����ַ(0XFF=0X01)ʱ,OV2640��DSP�Ĵ�����ַӳ���
+/* OV2640 Registers definition when sensor bank selected (0xFF = 0x01) */
 #define OV2640_SENSOR_GAIN       0x00
 #define OV2640_SENSOR_COM1       0x03
 #define OV2640_SENSOR_REG04      0x04

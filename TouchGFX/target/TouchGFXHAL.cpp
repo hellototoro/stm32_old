@@ -40,7 +40,6 @@ void TouchGFXHAL::initialize()
     // To overwrite the generated implementation, omit call to parent function
     // and implemented needed functionality here.
     // Please note, HAL::initialize() must be called to initialize the framework.
-    //LCD_Init();
     //tftlcd.s6d04d1::init();
 
     TouchGFXGeneratedHAL::initialize();
@@ -113,10 +112,8 @@ void TouchGFXHAL::flushFrameBuffer(const touchgfx::Rect& rect)
     //uint16_t* fb = HAL::lockFrameBuffer();
 
     //Prepare display: Set cursor, write to display gram as described previously in this scenario
-    //LCD_SetWindow(rect.x, rect.y, rect.width, rect.height);
     tftlcd.s6d04d1::setDisplayWindow(rect.x, rect.y, rect.width, rect.height);
-    //LCD_WriteRAM_Prepare();		//�???始写入GRAM
-    tftlcd.s6d04d1::prepareWrite();
+    tftlcd.s6d04d1::prepareWrite();//�?始写入GRAM
 
     //Try to take a display semaphore - Always free at this point
     //xSemaphoreTake(screen_frame_buffer_sem, portMAX_DELAY);

@@ -75,7 +75,7 @@
             "TextRotation": "0",
             "Style": "Style8",
             "Name": "infoButton",
-            "X": 219,
+            "X": 214,
             "Y": 134,
             "Width": 170,
             "Height": 60,
@@ -105,7 +105,7 @@
             "TextRotation": "0",
             "Style": "Style8",
             "Name": "cameraButton",
-            "X": 219,
+            "X": 214,
             "Y": 31,
             "Width": 170,
             "Height": 60,
@@ -135,7 +135,7 @@
             "TextRotation": "0",
             "Style": "Style8",
             "Name": "pictureButton",
-            "X": 10,
+            "X": 19,
             "Y": 134,
             "Width": 170,
             "Height": 60,
@@ -165,7 +165,7 @@
             "TextRotation": "0",
             "Style": "Style8",
             "Name": "clockButton",
-            "X": 10,
+            "X": 19,
             "Y": 31,
             "Width": 170,
             "Height": 60,
@@ -236,10 +236,10 @@
             "InitialMinute": 10,
             "InitialSecond": 0,
             "Name": "clock",
-            "X": 84,
+            "X": 83,
             "Y": 0,
-            "Width": 233,
-            "Height": 243,
+            "Width": 234,
+            "Height": 228,
             "Visible": true,
             "LockPosition": false,
             "Draggable": false,
@@ -330,27 +330,6 @@
           }
         ],
         "Name": "clockScreen",
-        "OverrideDefaultBufferSize": false,
-        "CanvasBufferSize": 0
-      },
-      {
-        "Components": [],
-        "Interactions": [],
-        "Name": "cameraScreen",
-        "OverrideDefaultBufferSize": false,
-        "CanvasBufferSize": 0
-      },
-      {
-        "Components": [],
-        "Interactions": [],
-        "Name": "pictureScreen",
-        "OverrideDefaultBufferSize": false,
-        "CanvasBufferSize": 0
-      },
-      {
-        "Components": [],
-        "Interactions": [],
-        "Name": "infoScreen",
         "OverrideDefaultBufferSize": false,
         "CanvasBufferSize": 0
       }

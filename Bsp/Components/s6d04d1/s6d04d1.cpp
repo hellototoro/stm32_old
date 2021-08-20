@@ -62,6 +62,11 @@ uint16_t s6d04d1::getPixelHeight(void)
  return height;
 }
 
+uint32_t s6d04d1::getRamAddress(void)
+{
+    return readRamAddress();
+}
+
 /**
   * @brief  Get the s6d04d1 ID.
   * @param  None
@@ -70,8 +75,9 @@ uint16_t s6d04d1::getPixelHeight(void)
 uint16_t s6d04d1::readID(void)
 {
     LCD_IO_WriteReg(RDID2);
+    LCD_IO_ReadRamData();//Dummy read 
     id = LCD_IO_ReadRamData();
-  return id;
+    return id;
 }
 
 /**
@@ -116,11 +122,13 @@ void s6d04d1::writePixel(uint16_t Xpos, uint16_t Ypos, uint16_t RGBCode)
   */
 uint16_t s6d04d1::readPixel(uint16_t Xpos, uint16_t Ypos)
 {
-  /* Set Cursor */
-  setCursor(Xpos, Ypos);
-  
-  /* Read 16-bit Reg */
-  return (LCD_IO_ReadData(RAMRD));
+    /* Set Cursor */
+    setCursor(Xpos, Ypos);
+    
+    /* Read 16-bit Reg */
+    LCD_IO_WriteReg(RAMRD);
+    LCD_IO_ReadRamData();//Dummy read 
+    return (LCD_IO_ReadRamData());
 }
 
 /**
@@ -159,18 +167,18 @@ uint16_t s6d04d1::readReg(uint8_t LCDReg)
 void s6d04d1::setDisplayWindow(uint16_t Xpos,uint16_t Ypos,uint16_t width,uint16_t height)
 {
     uint16_t twidth,theight;
-    twidth = Xpos + width-1;
-    theight = Ypos+height-1;
+    twidth = (Xpos + width) > this->width ? this->width : (Xpos + width -1);
+    theight = (Ypos + height) > this->height ? this->height : (Ypos + height -1);
     LCD_IO_WriteReg(CASET); 
-    LCD_IO_WriteData(Xpos>>8); 
-    LCD_IO_WriteData(Xpos&0XFF);	 
-    LCD_IO_WriteData(twidth>>8); 
-    LCD_IO_WriteData(twidth&0XFF);  
+    LCD_IO_WriteData(Xpos >> 8); 
+    LCD_IO_WriteData(Xpos & 0XFF);	 
+    LCD_IO_WriteData(twidth >> 8); 
+    LCD_IO_WriteData(twidth & 0XFF);  
     LCD_IO_WriteReg(PASET); 
-    LCD_IO_WriteData(Ypos>>8); 
-    LCD_IO_WriteData(Ypos&0XFF); 
-    LCD_IO_WriteData(theight>>8); 
-    LCD_IO_WriteData(theight&0XFF); 
+    LCD_IO_WriteData(Ypos >> 8); 
+    LCD_IO_WriteData(Ypos & 0XFF); 
+    LCD_IO_WriteData(theight >> 8); 
+    LCD_IO_WriteData(theight & 0XFF); 
 }
 
 /**
@@ -181,7 +189,6 @@ void s6d04d1::setDisplayWindow(uint16_t Xpos,uint16_t Ypos,uint16_t width,uint16
 void s6d04d1::setScanMode(scanMode mode)
 {
     uint16_t regValue = 0;
-    uint16_t temp;
 
     switch (mode)
     {
@@ -247,29 +254,16 @@ void s6d04d1::setScanMode(scanMode mode)
     }
     LCD_IO_WriteReg(MADCTL);
     LCD_IO_WriteData(regValue);
-    if ( regValue & 0X20 ) {
-        if( width < height ) {//交换X,Y
-            temp = width;
-            width = height;
-            height = temp;
-        }
-    } else {
-        if( width > height ) {//交换X,Y
-            temp = width;
-            width = height;
-            height = temp;
-        }
-    }  
     LCD_IO_WriteReg(CASET); 
     LCD_IO_WriteData(0);
     LCD_IO_WriteData(0);
-    LCD_IO_WriteData((width-1)>>8);
-    LCD_IO_WriteData((width-1)&0XFF);
+    LCD_IO_WriteData((width-1) >> 8);
+    LCD_IO_WriteData((width-1) & 0XFF);
     LCD_IO_WriteReg(PASET); 
     LCD_IO_WriteData(0);
     LCD_IO_WriteData(0);
-    LCD_IO_WriteData((height-1)>>8);
-    LCD_IO_WriteData((height-1)&0XFF);  
+    LCD_IO_WriteData((height-1) >> 8);
+    LCD_IO_WriteData((height-1) & 0XFF);  
 }
 
 /**
@@ -285,17 +279,11 @@ void s6d04d1::setDisplayDir(displayDir _displayDir)
     case displayDir::vertical://竖屏
         width = 240;
         height = 400;
-//        lcddev.wramcmd=0X2C;
-//        lcddev.setxcmd=0X2A;
-//        lcddev.setycmd=0X2B;  	 
         break;
     
     case displayDir::horizontal://横屏
         width = 400;
         height = 240;
-//        lcddev.wramcmd=0X2C;
-//        lcddev.setxcmd=0X2A;
-//        lcddev.setycmd=0X2B;  	 
         break;
     default:
         break;

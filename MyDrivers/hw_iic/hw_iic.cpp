@@ -16,10 +16,10 @@ hw_iic::hw_iic() {
 
 }
 
-void hw_iic::init(I2C_HandleTypeDef *_IIC_Handle,uint8_t _deviceAddress)
+void hw_iic::init(I2C_HandleTypeDef *IIC_Handle,uint8_t deviceAddress)
 {
-    IIC_Handle = _IIC_Handle ;
-    deviceAddress = _deviceAddress ;
+    this->IIC_Handle = IIC_Handle;
+    this->deviceAddress = deviceAddress;
 }
 
 void hw_iic::error(void)

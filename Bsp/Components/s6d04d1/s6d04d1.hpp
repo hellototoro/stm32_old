@@ -40,6 +40,7 @@ public:
     void setDisplayDir(displayDir _displayDir);
     uint16_t getPixelWidth(void);
     uint16_t getPixelHeight(void);
+    uint32_t getRamAddress(void);
 
     void writePixel(uint16_t Xpos, uint16_t Ypos, uint16_t RGBCode);
     uint16_t readPixel(uint16_t Xpos, uint16_t Ypos);

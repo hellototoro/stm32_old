@@ -19,8 +19,8 @@
 
 /* USER CODE BEGIN TouchGFXHAL.hpp */
 
+#include <display/display.hpp>
 #include <TouchGFXGeneratedHAL.hpp>
-#include <display/Inc/display.hpp>
 
 /**
  * @class TouchGFXHAL

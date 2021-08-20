@@ -111,6 +111,11 @@ void LCD_IO_WriteMultipleData(__IO uint16_t *pData, uint32_t Size)
     }
 }
 
+uint32_t readRamAddress(void)
+{
+    return ((uint32_t)&FMC_BANK1NORSRAM4->RAM);
+}
+
 void LCD_Delay(uint32_t delay)
 {
     HAL_Delay(delay);

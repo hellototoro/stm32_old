@@ -14,6 +14,7 @@ extern uint16_t LCD_IO_ReadData(uint16_t Reg);
 extern uint16_t LCD_IO_ReadRamData(void);
 extern void LCD_IO_WriteMultipleData(__IO uint16_t *pData, uint32_t Size);
 extern void LCD_Delay(uint32_t delay);
+extern uint32_t readRamAddress(void);
 
 #ifdef __cplusplus
 }
