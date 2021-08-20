@@ -18,3 +18,4 @@ TouchGFX/assets/
 
 # Emacs
 .#*
+.settings/language.settings.xml
