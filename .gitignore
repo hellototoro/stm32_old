@@ -13,6 +13,9 @@ TouchGFX/assets/
 # Middlewares 
 /Middlewares/
 
+# CMSIS
+/Drivers/
+
 # VScode
 .vscode
 
